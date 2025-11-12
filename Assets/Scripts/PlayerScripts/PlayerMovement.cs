@@ -3,8 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    public float speed = 6f;        // Movement speed
-    public float jumpHeight = 2f;   // Jump strength
+    public float speed = 3f;        // Movement speed
+    public float jumpHeight = 10f;   // Jump strength
     public float gravity = -9.81f;  // Gravity value
     public Transform groundCheck;   // Empty object at player’s feet
     public float groundDistance = 0.4f;
