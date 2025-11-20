@@ -253,6 +253,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: character
       objectReference: {fileID: 0}
+    - target: {fileID: 2223639932434330405, guid: 2cf05741920b94034bb5806b59edc5c5, type: 3}
+      propertyPath: m_Animation
+      value: 
+      objectReference: {fileID: -203655887218126122, guid: a3e7fc7ff9687431c99368ba2ef94909, type: 3}
+    - target: {fileID: 2223639932434330405, guid: 2cf05741920b94034bb5806b59edc5c5, type: 3}
+      propertyPath: m_AnimatePhysics
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2223639932434330405, guid: 2cf05741920b94034bb5806b59edc5c5, type: 3}
+      propertyPath: m_Animations.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2223639932434330405, guid: 2cf05741920b94034bb5806b59edc5c5, type: 3}
+      propertyPath: 'm_Animations.Array.data[0]'
+      value: 
+      objectReference: {fileID: -203655887218126122, guid: 4a3c028627c6c4271a6403396a6d521b, type: 3}
+    - target: {fileID: 2223639932434330405, guid: 2cf05741920b94034bb5806b59edc5c5, type: 3}
+      propertyPath: 'm_Animations.Array.data[1]'
+      value: 
+      objectReference: {fileID: -203655887218126122, guid: a3e7fc7ff9687431c99368ba2ef94909, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
