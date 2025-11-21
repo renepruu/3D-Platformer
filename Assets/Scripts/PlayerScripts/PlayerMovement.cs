@@ -43,8 +43,8 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         // --- Mouse Look ---
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
         // Rotate player horizontally
         transform.Rotate(Vector3.up * mouseX);
