@@ -588,6 +588,9 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 0
+  mouseSensitivity: 70
+  lookUpLimit: 45
+  lookDownLimit: 80
 --- !u!143 &1737667478
 CharacterController:
   m_ObjectHideFlags: 0
