@@ -15,47 +15,57 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Mouse Look")]
     public float mouseSensitivity = 70f;
-    [Header("Vertical Look Limits")]
-    public float lookUpLimit = 45f;    // smaller = can't look too far up
-    public float lookDownLimit = 80f; // How far up/down you can look
 
-    private float xRotation = 0f; // Vertical camera rotation
+    [Header("Vertical Look Limits")]
+    public float lookUpLimit = 45f;
+    public float lookDownLimit = 80f;
+
+    [Header("Animation Settings")]
+    // threshold to consider player as falling (velocity.y less than this)
+    public float fallThreshold = -0.1f;
+    private float xRotation = 0f;
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
-    private Camera playerCamera; // Automatically finds the child camera
+    private Camera playerCamera;
+
+    // --- Animator reference ---
+    private Animator animator;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
 
-        // Preserve the camera’s starting angle to prevent snapping
+        // find Animator in child
+        animator = GetComponentInChildren<Animator>();
+
         xRotation = playerCamera.transform.localEulerAngles.x;
 
-        // Lock and hide the cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        Debug.Log("✅ PlayerMovement initialized with smooth look and preserved camera angle");
+        Debug.Log("PlayerMovement initialized.");
     }
 
     void Update()
     {
         // --- Mouse Look ---
+        Debug.Log("Animator found? " + animator);
+
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        // Rotate player horizontally
         transform.Rotate(Vector3.up * mouseX);
 
-        // Rotate camera vertically (pitch)
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -lookDownLimit, lookUpLimit);
         playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
         // --- Ground Check ---
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
         if (isGrounded && velocity.y < 0)
             velocity.y = -2f;
 
@@ -66,10 +76,24 @@ public class PlayerMovement : MonoBehaviour
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * speed * Time.deltaTime);
 
-        // --- Jump ---
+        // --- ANIMATION: Walking ---
+        bool isWalking = (x != 0 || z != 0);
+        animator.SetBool("isWalking", isWalking);
+
+        // --- ANIMATION: Jumping/Falling ---
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+
+        // Determine animation states from vertical velocity and grounded state
+        bool isJumpingAnim = !isGrounded && velocity.y > 0.1f;
+        bool isFallingAnim = !isGrounded && velocity.y < fallThreshold;
+
+        if (animator != null)
+        {
+            animator.SetBool("isJumping", isJumpingAnim);
+            animator.SetBool("isFalling", isFallingAnim);
         }
 
         // --- Gravity ---
