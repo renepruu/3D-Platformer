@@ -43,7 +43,9 @@ public class PlayerMovement : MonoBehaviour
         // Apply saved position/rotation if we just portaled from another scene
         if (PortalSceneManager.Instance != null)
         {
+            Debug.Log($"[PlayerMovement] Before apply, root pos {transform.root.position}");
             PortalSceneManager.Instance.ApplySavedTransformToPlayer(transform);
+            Debug.Log($"[PlayerMovement] After apply, root pos {transform.root.position}");
         }
 
         xRotation = playerCamera.transform.localEulerAngles.x;

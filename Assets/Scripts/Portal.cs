@@ -25,11 +25,8 @@ public class Portal : MonoBehaviour
             return;
         }
 
-        // Use the root transform in case the collider is on a child
-        Transform playerRoot = other.attachedRigidbody != null
-            ? other.attachedRigidbody.transform
-            : other.transform.root;
-
-        PortalSceneManager.Instance.SwitchWorld(playerRoot);
+        // Use THIS portal's transform as the anchor position
+        // so we always spawn at the door location in the other scene.
+        PortalSceneManager.Instance.SwitchWorld(transform);
     }
 }

@@ -11,6 +11,9 @@ public class PortalSpawner : MonoBehaviour
 
     private Camera _cam;
 
+    // Keep track of the last spawned portal so we can replace it
+    private GameObject _currentPortal;
+
     private void Start()
     {
         _cam = GetComponentInChildren<Camera>();
@@ -52,6 +55,12 @@ public class PortalSpawner : MonoBehaviour
         // visual door plane is oriented correctly.
         Quaternion rotation = Quaternion.LookRotation(-direction, Vector3.up) * Quaternion.Euler(0f, 90f, 0f);
 
-        Instantiate(portalPrefab, position, rotation);
+        // Destroy previous portal if it exists
+        if (_currentPortal != null)
+        {
+            Destroy(_currentPortal);
+        }
+
+        _currentPortal = Instantiate(portalPrefab, position, rotation);
     }
 }
