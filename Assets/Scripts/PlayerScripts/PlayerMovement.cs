@@ -104,18 +104,5 @@ public class PlayerMovement : MonoBehaviour
         // --- Gravity ---
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
-
-        // --- Portal hotkey ---
-        if (Input.GetKeyDown(KeyCode.E)) // change key if you like
-        {
-            if (PortalSceneManager.Instance != null)
-            {
-                PortalSceneManager.Instance.SwitchWorld(transform);
-            }
-            else
-            {
-                Debug.LogWarning("No PortalSceneManager present in the scene.");
-            }
-        }
     }
 }

@@ -421,6 +421,54 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a21beecbe9996346a001b84ad557fd9, type: 3}
+--- !u!1 &127849571
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 127849573}
+  - component: {fileID: 127849572}
+  m_Layer: 0
+  m_Name: PortalSceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &127849572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127849571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88a0420049b764ee8853b714660e8136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneA: SceneWithAssets
+  sceneB: DuplicateScene
+  lastPlayerPosition: {x: 0, y: 0, z: 0}
+  lastPlayerRotation: {x: 0, y: 0, z: 0, w: 0}
+--- !u!4 &127849573
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127849571}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.771169, y: 19.600891, z: 15.726124}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &147905973 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400004, guid: a6de270e64582964ca5ae37465eef30f, type: 3}
@@ -1816,6 +1864,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 17f6bf3135a3b44eb948d733fa66296c, type: 3}
   m_PrefabInstance: {fileID: 1421885331}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &559205932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559205926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56329b01e11014e5bb34c675f9a62e4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalPrefab: {fileID: 7831353421237518877, guid: 221184ba79a0c4fc28452f08e742e9cc, type: 3}
+  portalKey: 102
+  spawnDistance: 3
+  maxSpawnDistance: 20
+  placementMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1001 &592908652
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4654,6 +4721,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: The Boss@Idle(1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 17f6bf3135a3b44eb948d733fa66296c, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -4676,6 +4747,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 17f6bf3135a3b44eb948d733fa66296c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 559205927}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 17f6bf3135a3b44eb948d733fa66296c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 559205932}
   m_SourcePrefab: {fileID: 100100000, guid: 17f6bf3135a3b44eb948d733fa66296c, type: 3}
 --- !u!4 &1425656420 stripped
 Transform:
@@ -7113,3 +7187,4 @@ SceneRoots:
   - {fileID: 1433813377}
   - {fileID: 1446900383}
   - {fileID: 1421885331}
+  - {fileID: 127849573}
