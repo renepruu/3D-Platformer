@@ -43,7 +43,9 @@ public class PlayerMovement : MonoBehaviour
         // Apply saved position/rotation if we just portaled from another scene
         if (PortalSceneManager.Instance != null)
         {
+            Debug.Log($"[PlayerMovement] Before apply, root pos {transform.root.position}");
             PortalSceneManager.Instance.ApplySavedTransformToPlayer(transform);
+            Debug.Log($"[PlayerMovement] After apply, root pos {transform.root.position}");
         }
 
         xRotation = playerCamera.transform.localEulerAngles.x;
@@ -104,18 +106,5 @@ public class PlayerMovement : MonoBehaviour
         // --- Gravity ---
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
-
-        // --- Portal hotkey ---
-        if (Input.GetKeyDown(KeyCode.E)) // change key if you like
-        {
-            if (PortalSceneManager.Instance != null)
-            {
-                PortalSceneManager.Instance.SwitchWorld(transform);
-            }
-            else
-            {
-                Debug.LogWarning("No PortalSceneManager present in the scene.");
-            }
-        }
     }
 }

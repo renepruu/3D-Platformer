@@ -50,6 +50,8 @@ public class PortalSceneManager : MonoBehaviour
         lastPlayerPosition = playerTransform.position;
         lastPlayerRotation = playerTransform.rotation;
 
+        Debug.Log($"[PortalSceneManager] Saving player pos {lastPlayerPosition} rot {lastPlayerRotation.eulerAngles}");
+
         string targetScene;
         if (_currentScene == sceneA)
             targetScene = sceneB;
@@ -63,11 +65,16 @@ public class PortalSceneManager : MonoBehaviour
         SceneManager.LoadScene(targetScene);
     }
 
+    // Apply the last saved portal pose to the player root in the new scene.
     public void ApplySavedTransformToPlayer(Transform playerTransform)
     {
         if (playerTransform == null) return;
 
-        playerTransform.position = lastPlayerPosition;
-        playerTransform.rotation = lastPlayerRotation;
+        Transform root = playerTransform.root;
+
+        Debug.Log($"[PortalSceneManager] Applying saved portal pos {lastPlayerPosition} rot {lastPlayerRotation.eulerAngles} to root {root.name}");
+
+        root.position = lastPlayerPosition;
+        root.rotation = lastPlayerRotation;
     }
 }
