@@ -40,19 +40,24 @@ public class PlayerMovement : MonoBehaviour
         // find Animator in child
         animator = GetComponentInChildren<Animator>();
 
+        // Apply saved position/rotation if we just portaled from another scene
+        if (PortalSceneManager.Instance != null)
+        {
+            PortalSceneManager.Instance.ApplySavedTransformToPlayer(transform);
+        }
+
         xRotation = playerCamera.transform.localEulerAngles.x;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        Debug.Log("PlayerMovement initialized.");
+        Debug.Log("PlayerMovement initialized with portal support.");
     }
 
     void Update()
     {
         // --- Mouse Look ---
-        Debug.Log("Animator found? " + animator);
-
+        // Debug.Log("Animator found? " + animator);
 
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
@@ -99,5 +104,18 @@ public class PlayerMovement : MonoBehaviour
         // --- Gravity ---
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+
+        // --- Portal hotkey ---
+        if (Input.GetKeyDown(KeyCode.E)) // change key if you like
+        {
+            if (PortalSceneManager.Instance != null)
+            {
+                PortalSceneManager.Instance.SwitchWorld(transform);
+            }
+            else
+            {
+                Debug.LogWarning("No PortalSceneManager present in the scene.");
+            }
+        }
     }
 }
