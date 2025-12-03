@@ -22,39 +22,34 @@ public class PlayerMovement : MonoBehaviour
     public float lookDownLimit = 30f;
 
     [Header("Animation Settings")]
-    // threshold to consider player as falling (velocity.y less than this)
     public float fallThreshold = -0.1f;
+
     private float xRotation = 0f;
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
     private Camera playerCamera;
 
-    // --- Animator reference ---
     private Animator animator;
+
+    // Push from moving obstacles
+    private Vector3 externalPush = Vector3.zero;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
-
-        // find Animator in child
         animator = GetComponentInChildren<Animator>();
 
-        // Apply saved position/rotation if we just portaled from another scene
         if (PortalSceneManager.Instance != null)
         {
-            Debug.Log($"[PlayerMovement] Before apply, root pos {transform.root.position}");
             PortalSceneManager.Instance.ApplySavedTransformToPlayer(transform);
-            Debug.Log($"[PlayerMovement] After apply, root pos {transform.root.position}");
         }
 
         xRotation = playerCamera.transform.localEulerAngles.x;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        Debug.Log("PlayerMovement initialized with portal support.");
     }
 
     void Update()
@@ -69,10 +64,11 @@ public class PlayerMovement : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -lookDownLimit, lookUpLimit);
         playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
-        // --- Ground Check ---
+        // Ground Check
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
-        if (isGrounded && velocity.y < 0)
+        // 🔥 FIX: Prevent CC from forcing downward velocity during push
+        if (isGrounded && velocity.y < 0 && externalPush.magnitude < 0.05f)
             velocity.y = -2f;
 
         // --- Movement Input ---
@@ -99,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
         if (animator != null)
             animator.SetBool("isWalking", isWalking);
 
-        // --- ANIMATION: Jumping/Falling ---
+        // Jumping
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -114,8 +110,20 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("isFalling", isFallingAnim);
         }
 
-        // --- Gravity ---
+        // Gravity
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    // Push from moving obstacles
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.collider.attachedRigidbody == null)
+            return;
+
+        Vector3 push = hit.moveDirection;
+        push.y = 0;
+
+        externalPush += push * 2f; // push strength
     }
 }
