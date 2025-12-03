@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public float speed = 3f;
     public float jumpHeight = 5f;
     public float gravity = -9.81f;
+    public float turnSpeed = 200f; // Rotation smoothing speed
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -17,8 +18,8 @@ public class PlayerMovement : MonoBehaviour
     public float mouseSensitivity = 70f;
 
     [Header("Vertical Look Limits")]
-    public float lookUpLimit = 45f;
-    public float lookDownLimit = 80f;
+    public float lookUpLimit = 30f;
+    public float lookDownLimit = 30f;
 
     [Header("Animation Settings")]
     public float fallThreshold = -0.1f;
@@ -53,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // Mouse Look
+        // --- Mouse Look ---
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
@@ -70,21 +71,29 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded && velocity.y < 0 && externalPush.magnitude < 0.05f)
             velocity.y = -2f;
 
-        // Movement input
+        // --- Movement Input ---
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * x + transform.forward * z;
+        // Keyboard horizontal input rotates the player (A/D turns), forward/back (W/S) moves the player.
+        if (Mathf.Abs(x) > 0.01f)
+        {
+            transform.Rotate(Vector3.up * x * turnSpeed * Time.deltaTime);
+        }
 
-        // Apply movement + push
-        controller.Move((move * speed + externalPush) * Time.deltaTime);
+        // Only move forward/back relative to player facing
+        Vector3 move = transform.forward * z;
+        if (move.sqrMagnitude > 1f)
+            move.Normalize();
 
-        // Fade the push force
-        externalPush = Vector3.Lerp(externalPush, Vector3.zero, 5f * Time.deltaTime);
+        // Move the player (horizontal movement). Vertical motion handled by `velocity` + gravity below.
+        controller.Move(move * speed * Time.deltaTime);
 
-        // Animation: Walking
-        bool isWalking = (x != 0 || z != 0);
-        animator.SetBool("isWalking", isWalking);
+        // --- ANIMATION: Walking ---
+        // Only consider forward/back input (W/S) as walking. A/D rotates the player and should not trigger walk.
+        bool isWalking = Mathf.Abs(z) > 0.01f;
+        if (animator != null)
+            animator.SetBool("isWalking", isWalking);
 
         // Jumping
         if (Input.GetButtonDown("Jump") && isGrounded)
@@ -92,7 +101,6 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
 
-        // Jump/Fall animations
         bool isJumpingAnim = !isGrounded && velocity.y > 0.1f;
         bool isFallingAnim = !isGrounded && velocity.y < fallThreshold;
 

@@ -221,13 +221,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1090402792}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: -4}
+  m_LocalRotation: {x: 0.18225805, y: -0, z: -0, w: 0.98325074}
+  m_LocalPosition: {x: 0, y: 3, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2035481606}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 21.003, y: 0, z: 0}
 --- !u!114 &1090402794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -749,14 +749,16 @@ MonoBehaviour:
   speed: 3
   jumpHeight: 5
   gravity: -9.81
+  turnSpeed: 200
   groundCheck: {fileID: 2010060077}
   groundDistance: 0.4
   groundMask:
     serializedVersion: 2
     m_Bits: 64
   mouseSensitivity: 70
-  lookUpLimit: 45
+  lookUpLimit: 20
   lookDownLimit: 80
+  fallThreshold: -0.1
 --- !u!65 &2035481604
 BoxCollider:
   m_ObjectHideFlags: 0
