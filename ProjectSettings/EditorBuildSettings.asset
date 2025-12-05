@@ -11,9 +11,25 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SceneWithAssets.unity
     guid: ee30e1e3c6036ed44aa095c5bac187b5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/OutdoorsScene.unity
     guid: 8124e5870f4fd4c779e7a5f994e84ad1
+  - enabled: 1
+    path: Assets/Scenes/StarterpackScene.unity
+    guid: b09b0b308231b4462b8bd40f8b095f95
+  - enabled: 1
+    path: Assets/Scenes/DuplicateScene.unity
+    guid: 92c43ae8e7d8a4216a01f510eb8ba174
+  - enabled: 1
+    path: Assets/Scenes/SettingsMenu.unity
+    guid: a5cf052ca32b849a390768d5c69ed00a
+  - enabled: 1
+    path: Assets/Scenes/GameOverScene.unity
+    guid: dca97c8ce55958b43b6d64978599c6cf
+  - enabled: 1
+    path: Assets/Scenes/SceneWithAssets(parallel).unity
+    guid: 1f76198dae7dd6643b12cf59335b52a2
   m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
   m_UseUCBPForAssetBundles: 0

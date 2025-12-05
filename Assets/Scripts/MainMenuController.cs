@@ -8,9 +8,18 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("SceneWithAssets");
     }
 
+    public void Settings()
+    {
+        SceneManager.LoadScene("SettingsMenu");
+    }
+
     public void QuitGame()
     {
-        Application.Quit(); 
+        Application.Quit();
         Debug.Log("Game closed!");
+    }
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("MainMenuScene");
     }
 }
