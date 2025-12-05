@@ -9473,6 +9473,18 @@ PrefabInstance:
       propertyPath: jumpHeight
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 2531399837320410681, guid: 82d13aea1bcae415bbf0d49755de6e4b, type: 3}
+      propertyPath: mouseSensitivity
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3770439108853898510, guid: 82d13aea1bcae415bbf0d49755de6e4b, type: 3}
+      propertyPath: strafeJumpHeight
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3770439108853898510, guid: 82d13aea1bcae415bbf0d49755de6e4b, type: 3}
+      propertyPath: strafeMouseSensitivity
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6289041442799110704, guid: 82d13aea1bcae415bbf0d49755de6e4b, type: 3}
       propertyPath: m_Enabled
       value: 0
