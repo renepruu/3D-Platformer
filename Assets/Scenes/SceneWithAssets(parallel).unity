@@ -4749,7 +4749,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneA: SceneWithAssets
-  sceneB: DuplicateScene
+  sceneB: SceneWithAssets(parallel)
   lastPlayerPosition: {x: 0, y: 0, z: 0}
   lastPlayerRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!4 &1739400129
@@ -6132,7 +6132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6289041442799110704, guid: 82d13aea1bcae415bbf0d49755de6e4b, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7108870738668232647, guid: 82d13aea1bcae415bbf0d49755de6e4b, type: 3}
       propertyPath: m_SlopeLimit
