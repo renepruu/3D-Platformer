@@ -23,8 +23,22 @@ public class CrossScenePortalView : MonoBehaviour
     private Camera _mainCamera;
     private PortalSceneManager _mgr;
 
+    private void Awake()
+    {
+        // If a PortalView is present on this GameObject, let it control the
+        // portal camera and disable this legacy cross-scene visual.
+        if (GetComponent<PortalView>() != null)
+        {
+            enabled = false;
+            return;
+        }
+    }
+
     private void Start()
     {
+        if (!enabled)
+            return;
+
         _mgr = PortalSceneManager.Instance;
         _mainCamera = TryFindMainCamera();
 
@@ -67,6 +81,9 @@ public class CrossScenePortalView : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!enabled)
+            return;
+
         if (portalCamera == null)
             return;
 
@@ -74,9 +91,6 @@ public class CrossScenePortalView : MonoBehaviour
             _mainCamera = TryFindMainCamera();
         if (_mainCamera == null)
             return;
-
-        // Make sure the other scene is loaded so the portal camera can see it.
-        _mgr?.EnsureOtherSceneLoaded();
 
         // Mirror the main camera pose. Because both scenes are aligned copies,
         // this shows what you'd see from the same position in the other world.
@@ -90,20 +104,14 @@ public class CrossScenePortalView : MonoBehaviour
         portalCamera.nearClipPlane = _mainCamera.nearClipPlane;
         portalCamera.farClipPlane = _mainCamera.farClipPlane;
 
-        // Render the OTHER world's layers, if PortalSceneManager is configured.
-        if (_mgr != null)
-        {
-            // If current is sceneA → show worldB, else show worldA.
-            if (_mgr.GetCurrentSceneName() == _mgr.sceneA && _mgr.worldBLayers.value != 0)
-                portalCamera.cullingMask = _mgr.worldBLayers;
-            else if (_mgr.GetCurrentSceneName() == _mgr.sceneB && _mgr.worldALayers.value != 0)
-                portalCamera.cullingMask = _mgr.worldALayers;
-        }
+        // Optionally, you can customize portalCamera.cullingMask in the
+        // inspector. CrossScenePortalView no longer depends on
+        // PortalSceneManager's world layer masks.
     }
 
     private Camera TryFindMainCamera()
     {
-        var player = FindObjectOfType<PlayerMovement>();
+        var player = FindFirstObjectByType<PlayerMovement>();
         if (player != null)
         {
             var cam = player.GetComponentInChildren<Camera>();

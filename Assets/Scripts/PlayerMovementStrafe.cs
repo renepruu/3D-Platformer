@@ -39,9 +39,6 @@ public class PlayerMovementStrafe : MonoBehaviour
         strafeCamera = GetComponentInChildren<Camera>();
         strafeAnimator = GetComponentInChildren<Animator>();
 
-        if (PortalSceneManager.Instance != null)
-            PortalSceneManager.Instance.ApplySavedTransformToPlayer(transform);
-
         strafeXRotation = strafeCamera.transform.localEulerAngles.x;
 
         Cursor.lockState = CursorLockMode.Locked;

@@ -24,11 +24,17 @@ public class PortalView : MonoBehaviour
 
     private void Start()
     {
+        // Auto-find main camera if not wired.
+        if (mainCamera == null)
+            mainCamera = Camera.main;
+
         if (portalCamera != null && portalCamera.targetTexture != null && screenRenderer != null)
         {
             // Ensure the portal screen shows whatever the portal camera renders.
             screenRenderer.material.mainTexture = portalCamera.targetTexture;
         }
+
+        Debug.Log($"[PortalView] {name} mainCamera={(mainCamera ? mainCamera.name : "null")} portalCamera={(portalCamera ? portalCamera.name : "null")} linkedPortal={(linkedPortal ? linkedPortal.name : "null")}");
     }
 
     private void LateUpdate()
@@ -45,26 +51,30 @@ public class PortalView : MonoBehaviour
     /// </summary>
     private void UpdatePortalCameraPose()
     {
+        if (linkedPortal == null || portalCamera == null)
+            return;
+
         Transform srcPortal = transform;          // this portal
         Transform dstPortal = linkedPortal;       // other portal
         Transform cam = mainCamera.transform;
         Transform portalCam = portalCamera.transform;
 
-        // 1) Express main camera position/rotation in this portal's local space.
+        // We want a "see-through door" effect, not a mirror. So take the
+        // camera's local offset from this portal and apply it to the linked
+        // portal without mirroring.
+        //
+        // 1) Express main camera position relative to this portal.
         Vector3 camLocalPos = srcPortal.InverseTransformPoint(cam.position);
         Quaternion camLocalRot = Quaternion.Inverse(srcPortal.rotation) * cam.rotation;
 
-        // 2) Mirror through the portal plane: flip forward + sideways (180° around up).
-        camLocalPos = new Vector3(-camLocalPos.x, camLocalPos.y, -camLocalPos.z);
-        camLocalRot = Quaternion.AngleAxis(180f, Vector3.up) * camLocalRot;
-
-        // 3) Transform that local pose into the linked portal's world space.
+        // 2) Apply that same local pose to the linked portal.
         portalCam.position = dstPortal.TransformPoint(camLocalPos);
         portalCam.rotation = dstPortal.rotation * camLocalRot;
 
-        // Match FOV and clip plane so the view feels correct.
+        // Match FOV, clip planes, and culling mask so the view feels correct.
         portalCamera.fieldOfView = mainCamera.fieldOfView;
         portalCamera.nearClipPlane = mainCamera.nearClipPlane;
         portalCamera.farClipPlane = mainCamera.farClipPlane;
+        portalCamera.cullingMask = mainCamera.cullingMask;
     }
 }
