@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Animation Settings")]
     public float fallThreshold = -0.1f;
+    public float turnAnimSpeed = 5f;
 
     private float xRotation = 0f;
     private CharacterController controller;
@@ -31,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     private Camera playerCamera;
 
     private Animator animator;
+    private float turnValue = 0f;
 
     // Push from moving obstacles
     private Vector3 externalPush = Vector3.zero;
@@ -46,7 +48,8 @@ public class PlayerMovement : MonoBehaviour
             PortalSceneManager.Instance.ApplySavedTransformToPlayer(transform);
         }
 
-        xRotation = playerCamera.transform.localEulerAngles.x;
+        if (playerCamera != null)
+            xRotation = playerCamera.transform.localEulerAngles.x;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -60,12 +63,18 @@ public class PlayerMovement : MonoBehaviour
 
         transform.Rotate(Vector3.up * mouseX);
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -lookDownLimit, lookUpLimit);
-        playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        if (playerCamera != null)
+        {
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -lookDownLimit, lookUpLimit);
+            playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        }
 
         // Ground Check
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        if (groundCheck != null)
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        else
+            isGrounded = controller != null ? controller.isGrounded : false;
 
         // 🔥 FIX: Prevent CC from forcing downward velocity during push
         if (isGrounded && velocity.y < 0 && externalPush.magnitude < 0.05f)
@@ -74,6 +83,19 @@ public class PlayerMovement : MonoBehaviour
         // --- Movement Input ---
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
+
+        // --- ANIMATION: Turn ---
+        if (x != 0)
+        {
+            turnValue = Mathf.Lerp(turnValue, x, Time.deltaTime * turnAnimSpeed);
+        }
+        else
+        {
+            turnValue = Mathf.Lerp(turnValue, 0, Time.deltaTime * turnAnimSpeed);
+        }
+
+        if (animator != null)
+            animator.SetFloat("turn", turnValue);
 
         // Keyboard horizontal input rotates the player (A/D turns), forward/back (W/S) moves the player.
         if (Mathf.Abs(x) > 0.01f)
@@ -86,8 +108,8 @@ public class PlayerMovement : MonoBehaviour
         if (move.sqrMagnitude > 1f)
             move.Normalize();
 
-        // Move the player (horizontal movement). Vertical motion handled by `velocity` + gravity below.
-        controller.Move(move * speed * Time.deltaTime);
+        if (controller != null)
+            controller.Move(move * speed * Time.deltaTime);
 
         // --- ANIMATION: Walking ---
         // Only consider forward/back input (W/S) as walking. A/D rotates the player and should not trigger walk.
@@ -112,7 +134,8 @@ public class PlayerMovement : MonoBehaviour
 
         // Gravity
         velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        if (controller != null)
+            controller.Move(velocity * Time.deltaTime);
     }
 
     // Push from moving obstacles
