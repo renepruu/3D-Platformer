@@ -1,18 +1,14 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
 public class PortalSceneManager : MonoBehaviour
 {
     public static PortalSceneManager Instance { get; private set; }
 
-    [Header("Scene Names (must match Build Settings)")]
-    public string sceneA = "World_A";
-    public string sceneB = "World_B";
+    [Header("Current Scene (read-only)")]
+    [SerializeField] private string _currentScene;
 
-    [HideInInspector] public Vector3 lastPlayerPosition;
-    [HideInInspector] public Quaternion lastPlayerRotation;
-
-    private string _currentScene;
+    [Header("Scenes to preload additively (optional)")]
+    [Tooltip("Names of scenes (from Build Settings) that should be loaded additively on startup, e.g. 'SceneWithAssets(parallel)'.")]
+    public string[] additiveScenesToLoad;
 
     private void Awake()
     {
@@ -25,56 +21,39 @@ public class PortalSceneManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        _currentScene = SceneManager.GetActiveScene().name;
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        _currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+        // Optionally preload any additional scenes additively so things like
+        // parallel worlds are present for visual portals.
+        PreloadAdditiveScenes();
+
+        Debug.Log($"[PortalSceneManager] Active scene at startup: '{_currentScene}'");
     }
 
-    private void OnDestroy()
+    private void PreloadAdditiveScenes()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        _currentScene = scene.name;
-    }
-
-    public void SwitchWorld(Transform playerTransform)
-    {
-        if (playerTransform == null)
-        {
-            Debug.LogWarning("PortalSceneManager.SwitchWorld called with null player");
+        if (additiveScenesToLoad == null)
             return;
+
+        foreach (var sceneName in additiveScenesToLoad)
+        {
+            if (string.IsNullOrWhiteSpace(sceneName))
+                continue;
+
+            var scene = UnityEngine.SceneManagement.SceneManager.GetSceneByName(sceneName);
+            if (scene.isLoaded)
+            {
+                Debug.Log($"[PortalSceneManager] Additive scene '{sceneName}' already loaded.");
+                continue;
+            }
+
+            Debug.Log($"[PortalSceneManager] Loading additive scene '{sceneName}'...");
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(
+                sceneName,
+                UnityEngine.SceneManagement.LoadSceneMode.Additive
+            );
         }
-
-        lastPlayerPosition = playerTransform.position;
-        lastPlayerRotation = playerTransform.rotation;
-
-        Debug.Log($"[PortalSceneManager] Saving player pos {lastPlayerPosition} rot {lastPlayerRotation.eulerAngles}");
-
-        string targetScene;
-        if (_currentScene == sceneA)
-            targetScene = sceneB;
-        else if (_currentScene == sceneB)
-            targetScene = sceneA;
-        else
-            targetScene = sceneA;
-
-        Debug.Log($"Portaling from {_currentScene} to {targetScene} at {lastPlayerPosition}");
-
-        SceneManager.LoadScene(targetScene);
     }
 
-    // Apply the last saved portal pose to the player root in the new scene.
-    public void ApplySavedTransformToPlayer(Transform playerTransform)
-    {
-        if (playerTransform == null) return;
-
-        Transform root = playerTransform.root;
-
-        Debug.Log($"[PortalSceneManager] Applying saved portal pos {lastPlayerPosition} rot {lastPlayerRotation.eulerAngles} to root {root.name}");
-
-        root.position = lastPlayerPosition;
-        root.rotation = lastPlayerRotation;
-    }
+    public string GetCurrentSceneName() => _currentScene;
 }

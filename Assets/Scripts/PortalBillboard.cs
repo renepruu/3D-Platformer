@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class PortalBillboard : MonoBehaviour
 {
-    [Tooltip("Transform to face. Leave empty to use Camera.main.")]
+    [Tooltip("Transform to face. Leave empty to auto-find the player camera.")]
     public Transform target;
 
     [Tooltip("If true, only rotate around Y so the portal stays upright.")]
@@ -19,8 +19,9 @@ public class PortalBillboard : MonoBehaviour
     {
         if (target == null)
         {
-            if (Camera.main == null) return;
-            target = Camera.main.transform;
+            TryFindTarget();
+            if (target == null)
+                return;
         }
 
         Vector3 dir = target.position - transform.position;
@@ -35,5 +36,24 @@ public class PortalBillboard : MonoBehaviour
             dir = -dir;
 
         transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
+    }
+
+    private void TryFindTarget()
+    {
+        // Prefer the camera attached to PlayerMovement, if any
+        var player = FindObjectOfType<PlayerMovement>();
+        if (player != null)
+        {
+            var cam = player.GetComponentInChildren<Camera>();
+            if (cam != null)
+            {
+                target = cam.transform;
+                return;
+            }
+        }
+
+        // Fallback to Camera.main
+        if (Camera.main != null)
+            target = Camera.main.transform;
     }
 }

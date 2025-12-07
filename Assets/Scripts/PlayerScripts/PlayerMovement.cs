@@ -41,11 +41,6 @@ public class PlayerMovement : MonoBehaviour
         playerCamera = GetComponentInChildren<Camera>();
         animator = GetComponentInChildren<Animator>();
 
-        if (PortalSceneManager.Instance != null)
-        {
-            PortalSceneManager.Instance.ApplySavedTransformToPlayer(transform);
-        }
-
         xRotation = playerCamera.transform.localEulerAngles.x;
 
         Cursor.lockState = CursorLockMode.Locked;

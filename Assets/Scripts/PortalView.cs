@@ -24,16 +24,22 @@ public class PortalView : MonoBehaviour
 
     private void Start()
     {
+        // Auto-find main camera if not wired.
+        if (mainCamera == null)
+            mainCamera = Camera.main;
+
         if (portalCamera != null && portalCamera.targetTexture != null && screenRenderer != null)
         {
             // Ensure the portal screen shows whatever the portal camera renders.
             screenRenderer.material.mainTexture = portalCamera.targetTexture;
         }
+
+        Debug.Log($"[PortalView] {name} mainCamera={(mainCamera ? mainCamera.name : "null")} portalCamera={(portalCamera ? portalCamera.name : "null")} linkedPortal={(linkedPortal ? linkedPortal.name : "null")}");
     }
 
     private void LateUpdate()
     {
-        if (linkedPortal == null || mainCamera == null || portalCamera == null)
+        if (linkedPortal == null || portalCamera == null)
             return;
 
         UpdatePortalCameraPose();
@@ -41,30 +47,30 @@ public class PortalView : MonoBehaviour
 
     /// <summary>
     /// Positions and orients the portal camera so that looking at this portal
-    /// shows the correct perspective from the linked portal.
+    /// shows a FIXED view from the linked portal, like a CCTV camera mounted
+    /// in the centre of the other door, always looking straight out.
+    ///
+    /// This is intentionally independent of the player's camera position.
     /// </summary>
     private void UpdatePortalCameraPose()
     {
-        Transform srcPortal = transform;          // this portal
         Transform dstPortal = linkedPortal;       // other portal
-        Transform cam = mainCamera.transform;
         Transform portalCam = portalCamera.transform;
 
-        // 1) Express main camera position/rotation in this portal's local space.
-        Vector3 camLocalPos = srcPortal.InverseTransformPoint(cam.position);
-        Quaternion camLocalRot = Quaternion.Inverse(srcPortal.rotation) * cam.rotation;
+        // Place the camera at the centre of the other portal, slightly in
+        // front of the surface so it doesn't clip into the geometry.
+        const float forwardOffset = 0.05f;
+        portalCam.position = dstPortal.position + dstPortal.forward * forwardOffset;
+        portalCam.rotation = dstPortal.rotation;
 
-        // 2) Mirror through the portal plane: flip forward + sideways (180° around up).
-        camLocalPos = new Vector3(-camLocalPos.x, camLocalPos.y, -camLocalPos.z);
-        camLocalRot = Quaternion.AngleAxis(180f, Vector3.up) * camLocalRot;
-
-        // 3) Transform that local pose into the linked portal's world space.
-        portalCam.position = dstPortal.TransformPoint(camLocalPos);
-        portalCam.rotation = dstPortal.rotation * camLocalRot;
-
-        // Match FOV and clip plane so the view feels correct.
-        portalCamera.fieldOfView = mainCamera.fieldOfView;
-        portalCamera.nearClipPlane = mainCamera.nearClipPlane;
-        portalCamera.farClipPlane = mainCamera.farClipPlane;
+        // Optionally match FOV / clip planes to the main camera so it feels
+        // similar, but do NOT copy its position or rotation.
+        if (mainCamera != null)
+        {
+            portalCamera.fieldOfView = mainCamera.fieldOfView;
+            portalCamera.nearClipPlane = mainCamera.nearClipPlane;
+            portalCamera.farClipPlane = mainCamera.farClipPlane;
+            portalCamera.cullingMask = mainCamera.cullingMask;
+        }
     }
 }

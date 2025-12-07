@@ -9,10 +9,15 @@ public class PortalSpawner : MonoBehaviour
     public float maxSpawnDistance = 20f;
     public LayerMask placementMask; // surfaces we can place the portal on
 
+    [Header("World Offset")]
+    [Tooltip("Offset between base world and parallel world. Example: (0,1000,0).")]
+    public Vector3 worldOffset = new Vector3(0f, 1000f, 0f);
+
     private Camera _cam;
 
-    // Keep track of the last spawned portal so we can replace it
-    private GameObject _currentPortal;
+    // Keep track of the last spawned portals so we can replace them
+    private GameObject _portalA;
+    private GameObject _portalB;
 
     private void Start()
     {
@@ -55,12 +60,40 @@ public class PortalSpawner : MonoBehaviour
         // visual door plane is oriented correctly.
         Quaternion rotation = Quaternion.LookRotation(-direction, Vector3.up) * Quaternion.Euler(0f, 90f, 0f);
 
-        // Destroy previous portal if it exists
-        if (_currentPortal != null)
+        // Destroy previous portals if they exist
+        if (_portalA != null)
+            Destroy(_portalA);
+        if (_portalB != null)
+            Destroy(_portalB);
+
+        // Spawn entrance portal at desired position
+        _portalA = Instantiate(portalPrefab, position, rotation);
+
+        // Determine whether we are currently in the base world or the
+        // parallel world, based on height. If below halfway to the offset,
+        // assume base; otherwise assume parallel.
+        bool inBaseWorld = transform.position.y < worldOffset.y * 0.5f;
+        Vector3 offset = inBaseWorld ? worldOffset : -worldOffset;
+
+        // Spawn exit portal in the other world at the same local XZ coords.
+        Vector3 exitPos = position + offset;
+        _portalB = Instantiate(portalPrefab, exitPos, rotation);
+
+        // Wire up Portal components so they know about each other
+        var portalCompA = _portalA.GetComponent<Portal>();
+        var portalCompB = _portalB.GetComponent<Portal>();
+        if (portalCompA != null && portalCompB != null)
         {
-            Destroy(_currentPortal);
+            portalCompA.linkedPortal = _portalB.transform;
+            portalCompB.linkedPortal = _portalA.transform;
         }
 
-        _currentPortal = Instantiate(portalPrefab, position, rotation);
+        // If the prefab has PortalView (same-scene visual effect), also link it
+        var viewA = _portalA.GetComponent<PortalView>();
+        var viewB = _portalB.GetComponent<PortalView>();
+        if (viewA != null)
+            viewA.linkedPortal = _portalB.transform;
+        if (viewB != null)
+            viewB.linkedPortal = _portalA.transform;
     }
 }
