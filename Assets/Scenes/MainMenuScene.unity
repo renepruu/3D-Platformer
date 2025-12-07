@@ -125,31 +125,31 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 569431145}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 0438a3823f52a4f4c8aebc50fd93b0cd, type: 3}
       propertyPath: m_LocalScale.x
-      value: 50.401394
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0438a3823f52a4f4c8aebc50fd93b0cd, type: 3}
       propertyPath: m_LocalScale.y
-      value: 33.93446
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0438a3823f52a4f4c8aebc50fd93b0cd, type: 3}
       propertyPath: m_LocalScale.z
-      value: 36.318638
+      value: 51.048157
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0438a3823f52a4f4c8aebc50fd93b0cd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 63.181
+      value: 618
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0438a3823f52a4f4c8aebc50fd93b0cd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -54.71
+      value: -532
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0438a3823f52a4f4c8aebc50fd93b0cd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 178
+      value: -222
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0438a3823f52a4f4c8aebc50fd93b0cd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -771,10 +771,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -791,7 +791,7 @@ Canvas:
   m_GameObject: {fileID: 569431141}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 745573532}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -817,6 +817,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1850525107}
   - {fileID: 850787472}
   - {fileID: 396589277}
   - {fileID: 459309886}
@@ -1560,6 +1561,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1391276018}
   m_CullTransparentMesh: 1
+--- !u!4 &1850525107 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0438a3823f52a4f4c8aebc50fd93b0cd, type: 3}
+  m_PrefabInstance: {fileID: 16712968}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2030713372
 GameObject:
   m_ObjectHideFlags: 0
@@ -1690,4 +1696,3 @@ SceneRoots:
   - {fileID: 569431145}
   - {fileID: 1182313689}
   - {fileID: 1274109961}
-  - {fileID: 16712968}
