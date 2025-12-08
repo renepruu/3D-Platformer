@@ -14,11 +14,4 @@ public class FootstepPlayer : MonoBehaviour
         Source.PlayOneShot(footstepSounds[randomIndex]);
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            PlayFootstep();
-        }
-    }
 }
