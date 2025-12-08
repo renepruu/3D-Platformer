@@ -252,6 +252,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 17f6bf3135a3b44eb948d733fa66296c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3770439108853898510}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 17f6bf3135a3b44eb948d733fa66296c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6785932378540854243}
   m_SourcePrefab: {fileID: 100100000, guid: 17f6bf3135a3b44eb948d733fa66296c, type: 3}
 --- !u!1 &332780836735865785 stripped
 GameObject:
@@ -370,6 +373,7 @@ MonoBehaviour:
   placementMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  worldOffset: {x: 0, y: 1000, z: 0}
 --- !u!114 &3770439108853898510
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -394,6 +398,19 @@ MonoBehaviour:
   strafeLookUpLimit: 30
   strafeLookDownLimit: 30
   strafeFallThreshold: -0.1
+--- !u!114 &-6785932378540854243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 332780836735865785}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a722f77179aee6a479c8765815eb7912, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fallThreshold: -2
 --- !u!4 &1140983853243074819 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 17f6bf3135a3b44eb948d733fa66296c, type: 3}
