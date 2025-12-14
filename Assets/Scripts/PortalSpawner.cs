@@ -9,6 +9,9 @@ public class PortalSpawner : MonoBehaviour
     public float maxSpawnDistance = 20f;
     public LayerMask placementMask; // surfaces we can place the portal on
 
+    [Tooltip("Vertical offset applied to the spawned portal position. Use negative values to place the portal lower. Default: -0.15")]
+    public float spawnHeightOffset = -0.15f;
+
     [Header("World Offset")]
     [Tooltip("Offset between base world and parallel world. Example: (0,1000,0).")]
     public Vector3 worldOffset = new Vector3(0f, 1000f, 0f);
@@ -53,8 +56,9 @@ public class PortalSpawner : MonoBehaviour
 
         Vector3 position = origin + direction.normalized * spawnDistance;
 
-        // Keep portal roughly at player height
-        position.y = origin.y;
+        // Keep portal roughly at player height, with a small downward offset so you can
+        // walk through without needing to jump.
+        position.y = origin.y + spawnHeightOffset;
 
         // Face the portal toward the player, then rotate 90 degrees so the
         // visual door plane is oriented correctly.
