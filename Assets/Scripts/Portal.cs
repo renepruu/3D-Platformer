@@ -14,7 +14,7 @@ public class Portal : MonoBehaviour
     [Tooltip("How far in front of the exit portal to place the player.")]
     public float exitOffset = 1.5f;
 
-    [Tooltip("Optional: limit which tag can use this portal (e.g. 'Player')")] 
+    [Tooltip("Optional: limit which tag can use this portal (e.g. 'Player').")]
     public string allowedTag = "Player";
 
     private void Awake()
@@ -36,13 +36,17 @@ public class Portal : MonoBehaviour
         if (!string.IsNullOrEmpty(allowedTag) && !player.CompareTag(allowedTag))
             return;
 
-        Vector3 playerPos = player.position;
-        Vector3 portalPos = transform.position;
+        // IMPORTANT: use FULL 3D distance (prevents triggering the “other world” portal
+        // just because it shares the same XZ). But use the CharacterController center,
+        // not the player transform (which is usually at the feet), otherwise you may need
+        // to jump to get close enough in Y.
+        Vector3 playerProbePos = player.position;
+        var cc = player.GetComponent<CharacterController>();
+        if (cc != null)
+            playerProbePos = cc.bounds.center;
 
-        Vector2 a = new Vector2(playerPos.x, playerPos.z);
-        Vector2 b = new Vector2(portalPos.x, portalPos.z);
-
-        if (Vector2.SqrMagnitude(a - b) <= triggerRadius * triggerRadius)
+        Vector3 delta = playerProbePos - transform.position;
+        if (delta.sqrMagnitude <= triggerRadius * triggerRadius)
         {
             TeleportPlayer();
         }
@@ -50,11 +54,22 @@ public class Portal : MonoBehaviour
 
     private void TeleportPlayer()
     {
-        Vector3 exitPos = linkedPortal.position + linkedPortal.forward * exitOffset;
+        // Make sure we place the player OUTSIDE the trigger radius of the destination portal,
+        // otherwise you can immediately re-trigger.
+        float safeOffset = Mathf.Max(exitOffset, triggerRadius + 0.1f);
+
+        Vector3 exitPos = linkedPortal.position + linkedPortal.forward * safeOffset;
         Quaternion exitRot = linkedPortal.rotation;
 
-        player.position = exitPos;
-        player.rotation = exitRot;
+        // CharacterController can fight direct transform moves; temporarily disable it.
+        var cc = player.GetComponent<CharacterController>();
+        if (cc != null)
+            cc.enabled = false;
+
+        player.SetPositionAndRotation(exitPos, exitRot);
+
+        if (cc != null)
+            cc.enabled = true;
 
         Debug.Log($"[Portal] Teleported player from {name} to {linkedPortal.name}");
     }
