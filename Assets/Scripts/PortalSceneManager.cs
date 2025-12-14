@@ -1,4 +1,7 @@
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 public class PortalSceneManager : MonoBehaviour
 {
     public static PortalSceneManager Instance { get; private set; }
@@ -7,8 +10,22 @@ public class PortalSceneManager : MonoBehaviour
     [SerializeField] private string _currentScene;
 
     [Header("Scenes to preload additively (optional)")]
-    [Tooltip("Names of scenes (from Build Settings) that should be loaded additively on startup, e.g. 'SceneWithAssets(parallel)'.")]
+    [Tooltip("Names of scenes (from Build Settings) that should be loaded additively on startup.")]
     public string[] additiveScenesToLoad;
+
+    [Header("When to preload")]
+    [Tooltip("If empty, additive scenes will be ensured on every SINGLE scene load. If set, only these active scenes will trigger the preload (e.g. 'SceneWithAssets').")]
+    public string[] preloadAdditivesWhenActiveSceneIs;
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 
     private void Awake()
     {
@@ -21,18 +38,48 @@ public class PortalSceneManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        _currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        _currentScene = SceneManager.GetActiveScene().name;
 
         // Optionally preload any additional scenes additively so things like
         // parallel worlds are present for visual portals.
-        PreloadAdditiveScenes();
+        EnsureAdditiveScenesLoaded();
 
         Debug.Log($"[PortalSceneManager] Active scene at startup: '{_currentScene}'");
     }
 
-    private void PreloadAdditiveScenes()
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (additiveScenesToLoad == null)
+        // Keep current scene in sync after menu/game transitions.
+        // (For LoadSceneMode.Single, the loaded scene is effectively the new "main" scene.)
+        if (mode == LoadSceneMode.Single)
+        {
+            _currentScene = scene.name;
+            Debug.Log($"[PortalSceneManager] Active scene changed to: '{_currentScene}'");
+
+            if (ShouldPreloadForScene(_currentScene))
+                EnsureAdditiveScenesLoaded();
+        }
+    }
+
+    private bool ShouldPreloadForScene(string activeSceneName)
+    {
+        if (preloadAdditivesWhenActiveSceneIs == null || preloadAdditivesWhenActiveSceneIs.Length == 0)
+            return true;
+
+        foreach (var s in preloadAdditivesWhenActiveSceneIs)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+                continue;
+            if (string.Equals(s, activeSceneName, StringComparison.Ordinal))
+                return true;
+        }
+
+        return false;
+    }
+
+    public void EnsureAdditiveScenesLoaded()
+    {
+        if (additiveScenesToLoad == null || additiveScenesToLoad.Length == 0)
             return;
 
         foreach (var sceneName in additiveScenesToLoad)
@@ -40,18 +87,12 @@ public class PortalSceneManager : MonoBehaviour
             if (string.IsNullOrWhiteSpace(sceneName))
                 continue;
 
-            var scene = UnityEngine.SceneManagement.SceneManager.GetSceneByName(sceneName);
+            var scene = SceneManager.GetSceneByName(sceneName);
             if (scene.isLoaded)
-            {
-                Debug.Log($"[PortalSceneManager] Additive scene '{sceneName}' already loaded.");
                 continue;
-            }
 
             Debug.Log($"[PortalSceneManager] Loading additive scene '{sceneName}'...");
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(
-                sceneName,
-                UnityEngine.SceneManagement.LoadSceneMode.Additive
-            );
+            SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         }
     }
 
